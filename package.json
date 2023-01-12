@@ -1,0 +1,40 @@
+{
+  "name": "tja",
+  "version": "0.1.0",
+  "description": "JavaScript parser for the TJA (Taikojiro) chart format.",
+  "main": "dist/index.js",
+  "files": [
+    "/dist"
+  ],
+  "scripts": {
+    "build": "rm -rf dist && tsc",
+    "docs": "typedoc",
+    "lint": "eslint src --ext .ts",
+    "lint:fix": "npm run lint -- --fix",
+    "prepack": "npm run build",
+    "watch": "npm run build -- --watch"
+  },
+  "repository": "https://github.com/jozsefsallai/taiko-js",
+  "author": "József Sallai<jozsef@sallai.me>",
+  "license": "MIT",
+  "private": false,
+  "keywords": [
+    "taiko",
+    "simulator",
+    "parser",
+    "file format",
+    "tja",
+    "taikojiro"
+  ],
+  "devDependencies": {
+    "@types/node": "^18.11.18",
+    "@typescript-eslint/eslint-plugin": "^5.48.1",
+    "@typescript-eslint/parser": "^5.48.1",
+    "eslint": "^8.31.0",
+    "eslint-config-prettier": "^8.6.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "prettier": "^2.8.2",
+    "typedoc": "^0.23.24",
+    "typescript": "^4.9.4"
+  }
+}
