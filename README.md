@@ -4,6 +4,9 @@
 is used by Taiko simulators. It contains the metadata and the notation for all
 of the song's difficulty levels.
 
+**Disclaimer:** The library is in early development and may undergo several
+breaking changes after receiving community feedback.
+
 ## Getting Started
 
 **1. Install the library:**
@@ -44,8 +47,25 @@ models, properties, and methods that are at your disposal.
 - Support for `#SENOTECHANGE`
 - Unit tests
 
+## Attributions
+
+Thanks to [bui][bui-profile-url] for providing a comprehensive specification for
+the TJA format. The documentation was also mostly based on this their guide.
+
+Here are some additional sources they've linked in their guide:
+
+- [".tja フォーマット"][aioilight-url] (.tja format) - AioiLight.space. _(dead link)_
+- ["仕様"][taikojiro-wiki-url] (Specifications) - 太鼓さん次郎交流 Wiki (Taiko Jiro Kouryuu Wiki).
+- ["譜面追加　自分で作る"][taikojiro-guide-url] (Adding charts, creating one yourself) - 太鼓さん次郎解説 (Taiko Jiro Kaisetsu).
+- ["CDTX.cs"][tjaplayer3-cdtx-url] - AioiLight/TJAPlayer3 repository.
+
 ## License
 
 MIT.
 
 [docs-url]: https://jozsefsallai.github.io/tja-js/
+[bui-profile-url]: https://github.com/bui
+[aioilight-url]: https://aioilight.space/taiko/tjap3/doc/tja/
+[taikojiro-wiki-url]: https://wikiwiki.jp/jiro/%E5%A4%AA%E9%BC%93%E3%81%95%E3%82%93%E6%AC%A1%E9%83%8E
+[taikojiro-guide-url]: http://taikosanjiro.hatenablog.com/entry/%E8%AD%9C%E9%9D%A2-2
+[tjaplayer3-cdtx-url]: https://github.com/AioiLight/TJAPlayer3/blob/master/TJAPlayer3/Songs/CDTX.cs
