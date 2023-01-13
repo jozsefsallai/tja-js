@@ -9,3 +9,4 @@ coverage
 .idea
 /test.js
 *.tja
+/docs

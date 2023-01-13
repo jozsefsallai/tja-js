@@ -1,6 +1,6 @@
 {
   "name": "tja",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "JavaScript parser for the TJA (Taikojiro) chart format.",
   "main": "dist/index.js",
   "files": [
@@ -14,7 +14,7 @@
     "prepack": "npm run build",
     "watch": "npm run build -- --watch"
   },
-  "repository": "https://github.com/jozsefsallai/taiko-js",
+  "repository": "https://github.com/jozsefsallai/tja-js",
   "author": "József Sallai<jozsef@sallai.me>",
   "license": "MIT",
   "private": false,
