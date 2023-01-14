@@ -1,3 +1,4 @@
+import { SPACE_REGEX } from '../../../common/regex';
 import { Note } from '../../note/Note';
 import { NoteFactory } from '../../note/NoteFactory';
 import { Command } from '../Command';
@@ -62,7 +63,7 @@ export class NoteSequence extends Command {
   ): NoteSequence | undefined {
     const command = new NoteSequence();
 
-    const rawNotes = args.join('').split('');
+    const rawNotes = args.join('').replace(SPACE_REGEX, '').split('');
 
     rawNotes.forEach((rawNote) => {
       const note = NoteFactory.fromCourseValue(rawNote, strict);

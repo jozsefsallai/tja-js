@@ -17,6 +17,7 @@ import {
   MultiKa,
   MeasureEnd,
 } from './types';
+import { NOTE_REGEX } from '../../common/regex';
 
 export class NoteFactory {
   static fromCourseValue(
@@ -52,6 +53,10 @@ export class NoteFactory {
         return new MultiKa();
       case NoteType.MeasureEnd:
         return new MeasureEnd();
+    }
+
+    if (raw.match(NOTE_REGEX)) {
+      return new BlankNote();
     }
 
     if (strict) {

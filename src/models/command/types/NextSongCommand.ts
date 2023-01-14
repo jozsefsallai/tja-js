@@ -57,8 +57,8 @@ export class NextSongCommand extends Command {
 
     const course = new Course();
     course.difficulty = Difficulty.Dan;
-    course.scoreInit = parseInt(components[4], 10);
-    course.scoreDiff = parseInt(components[5], 10);
+    course.activeCourse.scoreInit = parseInt(components[4], 10);
+    course.activeCourse.scoreDiff = parseInt(components[5], 10);
 
     song.addCourse(course);
 
@@ -71,8 +71,8 @@ export class NextSongCommand extends Command {
       this.song.subtitle,
       this.song.genre,
       this.song.wave,
-      this.song.courses[0].scoreInit,
-      this.song.courses[0].scoreDiff,
+      this.song.courses[0].activeCourse.scoreInit,
+      this.song.courses[0].activeCourse.scoreDiff,
     ].join(',');
 
     return `${super.toString()} ${songData}`;

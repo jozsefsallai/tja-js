@@ -5,14 +5,18 @@ import { commandClassMap } from './lib/commandClassMap';
 import { BranchMarkerCommand, NoteSequence } from './types';
 
 export class CommandFactory {
-  static fromLine(line: string, strict: boolean = true): Command | undefined {
+  static fromLine(
+    line: string,
+    canParseNotes: boolean,
+    strict: boolean = true,
+  ): Command | undefined {
     line = line.trim();
 
     if (line.length === 0) {
       return undefined;
     }
 
-    if (!line.startsWith('#')) {
+    if (!line.startsWith('#') && canParseNotes) {
       return NoteSequence.parse([line], strict);
     }
 

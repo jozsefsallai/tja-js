@@ -39,7 +39,7 @@ export class TJAParser {
     const song = new Song();
 
     let isParsingCourseData = false;
-    let isParsingCommandData = false;
+    let canParseNotes = false;
 
     while (!queue.isEmpty) {
       const line = queue.dequeue();
@@ -48,17 +48,16 @@ export class TJAParser {
         continue;
       }
 
-      if (line.startsWith('#')) {
-        isParsingCommandData = true;
-      }
+      const params = TJAParser.parseParameter(line);
 
-      if (!isParsingCommandData) {
-        const params = TJAParser.parseParameter(line);
-        if (params === undefined) {
+      if (params) {
+        const [key, value] = params;
+
+        if (value.length === 0) {
           continue;
         }
 
-        const [key, value] = params;
+        canParseNotes = false;
 
         if (key === CourseMetadataProperty.Course) {
           isParsingCourseData = true;
@@ -79,18 +78,19 @@ export class TJAParser {
         continue;
       }
 
-      if (isParsingCommandData) {
-        const course = song.courses[song.courses.length - 1];
-        if (typeof course === 'undefined') {
-          continue;
-        }
-
-        const command = TJAParser.parseCourseCommand(course, line, strict);
-        if (command?.commandType === CommandType.End) {
-          isParsingCommandData = false;
-        }
-
+      const course = song.courses[song.courses.length - 1];
+      if (typeof course === 'undefined') {
         continue;
+      }
+
+      const command = TJAParser.parseCourseCommand(
+        course,
+        line,
+        canParseNotes,
+        strict,
+      );
+      if (command && command.commandType === CommandType.Start) {
+        canParseNotes = true;
       }
     }
 
@@ -331,7 +331,7 @@ export class TJAParser {
     if (key === CourseMetadataProperty.ScoreInit) {
       const scoreInit = parseInt(value, 10);
       if (!isNaN(scoreInit)) {
-        course.scoreInit = scoreInit;
+        course.activeCourse.scoreInit = scoreInit;
       } else if (strict) {
         throw new TypeError(`Invalid course score init value: ${value}`);
       }
@@ -341,7 +341,7 @@ export class TJAParser {
     if (key === CourseMetadataProperty.ScoreDiff) {
       const scoreDiff = parseInt(value, 10);
       if (!isNaN(scoreDiff)) {
-        course.scoreDiff = scoreDiff;
+        course.activeCourse.scoreDiff = scoreDiff;
       } else if (strict) {
         throw new TypeError(`Invalid course score diff value: ${value}`);
       }
@@ -349,11 +349,14 @@ export class TJAParser {
     }
 
     if (key === CourseMetadataProperty.Balloon) {
-      const counts = value.split(',').map((c) => parseInt(c.trim(), 10));
+      const counts = value
+        .split(',')
+        .filter((c) => c.trim().length > 0)
+        .map((c) => parseInt(c.trim(), 10));
       const filteredCounts = counts.filter((c) => !isNaN(c));
 
       if (filteredCounts.length === counts.length) {
-        course.balloonCounts = filteredCounts;
+        course.activeCourse.balloonCounts = filteredCounts;
       } else if (strict) {
         throw new TypeError(`Invalid course balloon value: ${value}`);
       }
@@ -366,7 +369,8 @@ export class TJAParser {
       const filteredCounts = counts.filter((c) => !isNaN(c));
 
       if (filteredCounts.length === counts.length) {
-        course.branchBalloonCounts[BranchType.Normal] = filteredCounts;
+        course.activeCourse.branchBalloonCounts[BranchType.Normal] =
+          filteredCounts;
       } else if (strict) {
         throw new TypeError(`Invalid course balloon (normal) value: ${value}`);
       }
@@ -379,7 +383,8 @@ export class TJAParser {
       const filteredCounts = counts.filter((c) => !isNaN(c));
 
       if (filteredCounts.length === counts.length) {
-        course.branchBalloonCounts[BranchType.Advanced] = filteredCounts;
+        course.activeCourse.branchBalloonCounts[BranchType.Advanced] =
+          filteredCounts;
       } else if (strict) {
         throw new TypeError(
           `Invalid course balloon (advanced) value: ${value}`,
@@ -394,7 +399,8 @@ export class TJAParser {
       const filteredCounts = counts.filter((c) => !isNaN(c));
 
       if (filteredCounts.length === counts.length) {
-        course.branchBalloonCounts[BranchType.Master] = filteredCounts;
+        course.activeCourse.branchBalloonCounts[BranchType.Master] =
+          filteredCounts;
       } else if (strict) {
         throw new TypeError(`Invalid course balloon (master) value: ${value}`);
       }
@@ -405,7 +411,8 @@ export class TJAParser {
     if (key === CourseMetadataProperty.Style) {
       const style = Style.fromRaw(value, strict);
       if (style) {
-        course.style = style;
+        course.activeCourseStyle = style;
+        course.activeCourse.style = style;
       }
       return;
     }
@@ -434,7 +441,7 @@ export class TJAParser {
         strict,
       );
       if (gaugeIncrementMethod) {
-        course.gaugeIncrementMethod = gaugeIncrementMethod;
+        course.activeCourse.gaugeIncrementMethod = gaugeIncrementMethod;
       }
       return;
     }
@@ -443,7 +450,7 @@ export class TJAParser {
       const rawTotal = parseInt(value, 10);
       if (!isNaN(rawTotal)) {
         const total = new DojoGaugeTotal(rawTotal);
-        course.gaugeTotal = total;
+        course.activeCourse.gaugeTotal = total;
       } else if (strict) {
         throw new TypeError(`Invalid gauge total value: ${value}`);
       }
@@ -451,7 +458,7 @@ export class TJAParser {
     }
 
     if (key === CourseMetadataProperty.HiddenBranch && value === '1') {
-      course.hiddenBranches = true;
+      course.activeCourse.hiddenBranches = true;
       return;
     }
   }
@@ -459,9 +466,10 @@ export class TJAParser {
   private static parseCourseCommand(
     course: Course,
     line: string,
+    canParseNotes: boolean,
     strict: boolean,
   ): Command | undefined {
-    const command = CommandFactory.fromLine(line, strict);
+    const command = CommandFactory.fromLine(line, canParseNotes, strict);
 
     if (typeof command !== 'undefined') {
       course.addCommand(command);
@@ -470,10 +478,7 @@ export class TJAParser {
   }
 
   private static parseParameter(line: string): [string, string] | undefined {
-    const components = line
-      .split(':')
-      .map((c) => c.trim())
-      .filter((c) => c.length > 0);
+    const components = line.split(':').map((c) => c.trim());
 
     if (components.length < 2) {
       return undefined;
