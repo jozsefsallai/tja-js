@@ -97,6 +97,17 @@ export class TJAParser {
     return song;
   }
 
+  /**
+   * Wrapper method for `Song#toString()` which can be used to stringify a Song
+   * data object (similar to JSON's stringify method).
+   *
+   * @param song - The Song object to stringify.
+   * @returns The TJA-compatible representation of the Song object.
+   */
+  static stringify(song: Song): string {
+    return song.toString();
+  }
+
   private static setSongData(
     song: Song,
     key: string,

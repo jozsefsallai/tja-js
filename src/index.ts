@@ -21,6 +21,7 @@ export { DojoGaugeCondition } from './models/course/lib/DojoGaugeCondition';
 export { DojoGaugeScope } from './models/course/lib/DojoGaugeScope';
 
 export { Course } from './models/course/Course';
+export { CourseVariant } from './models/course/CourseVariant';
 export { DojoGauge } from './models/course/DojoGauge';
 
 export { NoteType } from './models/note/lib/NoteType';
