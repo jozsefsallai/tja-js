@@ -27,6 +27,15 @@ import { TJAParser } from 'tja';
 const { TJAParser } = require('tja');
 ```
 
+...or if you're in a browser environment:
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/tja@0.1/dist/browser/tja.min.js"></script>
+<script>
+  const { TJAParser } = window.TJA;
+</script>
+```
+
 **3. Parse a TJA file:**
 
 ```js
